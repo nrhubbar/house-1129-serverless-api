@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: users # NOTE: update this with your service name
+service: users
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -21,9 +21,8 @@ provider:
   name: aws
   runtime: nodejs8.10
 
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
+
+  stage: dev
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -55,8 +54,14 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  getUsers:
+    handler: handlers/getUsers.getUsers
+    events:
+      - http:
+          path: users
+          method: get
+          authorizer:
+            arn: arn:aws:cognito-idp:us-east-1:756988898359:userpool/us-east-1_Tg9PMWmJM
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -93,7 +98,9 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
+resources:
+  - ${file(resources/aws-cognito.yml)}
+
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket

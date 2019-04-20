@@ -1,14 +1,12 @@
 'use strict';
 
 module.exports.getUsers = async (event) => {
+  //TODO: Get email from event more safely
+  let email = event.requestContext.authorizer.claims.email;
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: event,
+      message: `You got a user with email ${email}`,
     }),
   };
-
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
 };

@@ -1,0 +1,56 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: users
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    COGNITO_AUTHORIZER: arn:aws:cognito-idp:us-east-1:756988898359:userpool/us-east-1_Tg9PMWmJM
+
+functions:
+  getUsers:
+    handler: handlers/getUsers.getUsers
+    events:
+      - http:
+          path: users
+          method: get
+          authorizer:
+            arn: ${self:provider.environment.COGNITO_AUTHORIZER}
+  createUsers:
+    handler: handlers/createUsers.createUsers
+    events:
+      - http: 
+          path: users
+          method: post
+          authorizer:
+              arn: ${self:provider.environment.COGNITO_AUTHORIZER}
+  updateUsers:
+    handler: handlers/updateUsers.updateUsers
+    events:
+      - http: 
+          path: users
+          method: put
+          authorizer:
+              arn: ${self:provider.environment.COGNITO_AUTHORIZER}
+
+# Points to AWS Config Files
+resources:
+  - ${file(resources/aws-cognito.yml)}
